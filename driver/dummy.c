@@ -34,6 +34,7 @@ dummy_init(void)
 {
   struct net_device *dev;
 
+  //デバイスを生成
   dev = net_device_alloc();
   if (!dev)
   {
@@ -44,7 +45,9 @@ dummy_init(void)
   dev->mtu = DUMMY_MTU;
   dev->hlen = 0; /* non header */
   dev->alen = 0; /* non address */
+  //デバイスドライバが実装している関数へのポインタを設定
   dev->ops = &dummy_ops;
+  //デバイスを登録
   if (net_device_register(dev) == -1)
   {
     errorf("net_device_register() failure");

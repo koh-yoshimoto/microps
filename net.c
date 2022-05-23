@@ -108,9 +108,15 @@ int net_input_handler(uint16_t type, const uint8_t *data, size_t len, struct net
   return 0;
 }
 
+//プロトコルスタックの起動
 int net_run(void)
 {
   struct net_device *dev;
+
+  if (intr_run() == -1)
+  {
+    errorf("shutting down");
+  }
 
   debugf("open all devices...");
   for (dev = devices; dev; dev = dev->next)
@@ -121,10 +127,12 @@ int net_run(void)
   return 0;
 }
 
+//プロトコルスタックの停止
 void net_shutdown(void)
 {
   struct net_device *dev;
 
+  intr_shutdown();
   debugf("close all devices...");
   for (dev = devices; dev; dev = dev->next)
   {
@@ -133,8 +141,14 @@ void net_shutdown(void)
   debugf("shutting down");
 }
 
+//初期化
 int net_init(void)
 {
+  if (intr_init() == -1)
+  {
+    errorf("intr_init() failure");
+    return -1;
+  }
   infof("initialized");
   return 0;
 }
